@@ -1,27 +1,57 @@
 package org.green;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
 
-        // Создаем списки для эксперимента
-        ArrayList<String> arrayList = new ArrayList<>();
-        LinkedList<String> linkedList = new LinkedList<>();
-        TreeSet<String> treeSet = new TreeSet<>();
-        HashSet<String> hashSet = new HashSet<>();
+        Scanner scanner = new Scanner(System.in);
 
-        // Тестируем и сохраняем всё в список для результатов
-        ArrayList<Measuring> listOfResults = new ArrayList<>(
-                List.of(addInList(arrayList), addInList(linkedList), addInSet(treeSet), addInSet(hashSet),
-                        findInList(arrayList), findInList(linkedList), findInSet(treeSet), findInSet(hashSet),
-                        deleteFromList(arrayList), deleteFromList(linkedList), deleteFromSet(treeSet), deleteFromSet(hashSet)));
+        System.out.println("Write what do you want.\nTest lists (\\test)\nSwap keys and values (\\map)");
 
+        if (scanner.nextLine().equals("\test")) {
 
-        // Вывод
-        System.out.println("List Name \t   Method Name \t Time");
-        for (Measuring listOfResult : listOfResults) {
-            output(listOfResult);
+            // Создаем списки для эксперимента
+            ArrayList<String> arrayList = new ArrayList<>();
+            LinkedList<String> linkedList = new LinkedList<>();
+            TreeSet<String> treeSet = new TreeSet<>();
+            HashSet<String> hashSet = new HashSet<>();
+
+            // Тестируем и сохраняем всё в список для результатов
+            ArrayList<Measuring> listOfResults = new ArrayList<>(
+                    List.of(addInList(arrayList), addInList(linkedList),
+                            addInSet(treeSet), addInSet(hashSet),
+                            findInList(arrayList), findInList(linkedList),
+                            findInSet(treeSet), findInSet(hashSet),
+                            deleteFromList(arrayList), deleteFromList(linkedList),
+                            deleteFromSet(treeSet), deleteFromSet(hashSet)));
+
+            // Вывод
+            System.out.println("List Name \t   Method Name \t Time");
+            for (Measuring listOfResult : listOfResults) {
+                output(listOfResult);
+            }
+
+        } else {
+
+            // Часть с HashMap
+            // Создаем HashMap
+            Map<String, Integer> hashMap = new HashMap<>();
+            Map<Integer, String> swappedMap;
+
+            // Заполняем HashMap
+            for (int i = 0; i < 100; i++) {
+                hashMap.put("Hello #" + i, i + 1);
+            }
+
+            // Меняем ключи и значения местами
+            swappedMap = hashMap
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+
+            output(hashMap, swappedMap);
         }
     }
 
@@ -30,6 +60,13 @@ public class Main {
         String methodName = measuring.getMethodName();
         long time = measuring.getTime();
         System.out.printf("%10s\t|\t  %-7s  |  %d\n", name, methodName, time);
+    }
+
+    private static void output(Map<String, Integer> originalMap, Map<Integer, String> swappedMap) {
+        System.out.println("Swapped Values\tOriginal Values");
+        for (int i = 0; i < originalMap.size(); i++) {
+            System.out.println(swappedMap.get(i + 1) + "\t \t \t" + originalMap.get(swappedMap.get(i + 1)));
+        }
     }
 
     private static Measuring addInList(List<String> list) {
